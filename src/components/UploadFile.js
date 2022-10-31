@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import '../css/uploadFile.css';
+import axios from 'axios'; 
 
 const UploadFile = () => {
   const [dragActive, setDragActive] = useState(false);
@@ -32,8 +33,31 @@ const UploadFile = () => {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setFileName(e.dataTransfer.files[0].name);
       console.log(e.dataTransfer.files[0]);
+      fileUpload(e.dataTransfer.files)
     }
   };
+
+  // file upload
+  const fileUpload = (fileList) => {
+    // console.log("gomgom fileList", fileList);
+    const fd = new FormData();
+    // 파일 데이터 저장
+    Object.values(fileList).forEach((file) => fd.append("file", file));
+    console.log("gomgom fd", fd);
+
+    axios.post('http://localhost:8080/saveData/create-csv', fd, {
+      headers: {
+        "Content-Type": `multipart/form-data;`,
+      },
+      baseURL: 'http://localhost:8080'
+    })
+    .then((res) => {
+      console.log("gomgom res", res);
+    })
+    .catch((err) => {
+      console.log("gomgom err", err);
+    });
+  }
 
   const onButtonClick = () => {
     inputRef.current.click();
