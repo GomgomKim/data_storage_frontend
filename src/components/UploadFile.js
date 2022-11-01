@@ -56,6 +56,17 @@ const UploadFile = () => {
     })
     .catch((err) => {
       console.log("gomgom err", err);
+      switch(err.code) {
+        case "ERR_NETWORK":
+          alert("네트워크 오류입니다. 다시 시도해주세요.");
+          break;
+        case "ERR_BAD_RESPONSE":
+          alert("서버 오류입니다. 잠시 후 다시 시도해주세요.");
+          break;
+        default:
+          alert("알 수 없는 오류입니다. 잠시 후 다시 시도해주세요.");
+          break;
+      }
     });
   }
 
