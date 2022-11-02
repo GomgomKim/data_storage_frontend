@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import '../css/uploadFile.css';
 import axios from 'axios'; 
 
@@ -6,6 +6,47 @@ const UploadFile = () => {
   const [dragActive, setDragActive] = useState(false);
   const [fileName, setFileName] = useState("");
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    const eventSource = new EventSource("http://localhost:8080/saveData/connect/id="+Math.random());
+    eventSource.addEventListener("sse", function (event) {
+      console.log("percent :",event.data);
+
+      const data = JSON.parse(event.data);
+
+      // (async () => {
+      //   // 브라우저 알림
+      //   const showNotification = () => {
+      //     const notification = new Notification('완료', {
+      //         body: data.content
+      //     });
+          
+      //     setTimeout(() => {
+      //         notification.close();
+      //     }, 10 * 1000);
+          
+      //     notification.addEventListener('click', () => {
+      //         window.open(data.url, '_blank');
+      //     });
+      //   }
+
+      //   // 브라우저 알림 허용 권한
+      //   let granted = false;
+
+      //   if (Notification.permission === 'granted') {
+      //       granted = true;
+      //   } else if (Notification.permission !== 'denied') {
+      //       let permission = await Notification.requestPermission();
+      //       granted = permission === 'granted';
+      //   }
+
+      //   // 알림 보여주기
+      //   if (granted) {
+      //       showNotification();
+      //   }
+      // })();
+    })
+  }, [])
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -53,6 +94,17 @@ const UploadFile = () => {
     })
     .then((res) => {
       console.log("gomgom res", res);
+      switch(res.data) {
+        case "SUCCESS":
+          alert("데이터 저장 완료됐습니다.");
+          break;
+        case "FAIL":
+          alert("데이터 저장에 실패했습니다.");
+          break;
+        default:
+          alert("알 수 없는 오류입니다. 잠시 후 다시 시도해주세요.");
+          break;
+      }
     })
     .catch((err) => {
       console.log("gomgom err", err);
@@ -73,6 +125,7 @@ const UploadFile = () => {
   const onButtonClick = () => {
     inputRef.current.click();
   };
+
 
   return (
     <>
