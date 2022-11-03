@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import '../css/uploadFile.css';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { updateSuccessFileCount } from "../actions/actionCreator";
+import { updateRequestFileCount, updateSuccessFileCount } from "../actions/actionCreator";
 import requestUpload from '../api/requestUpload';
 
 function UploadFile() {
@@ -10,6 +10,11 @@ function UploadFile() {
   const inputRef = useRef(null);
   const dispatch = useDispatch();
   const uploadState = useSelector((state) => state.commonReducer.uploadState, shallowEqual);
+
+  useEffect(() => {
+    console.log("gomgom uploadState", uploadState);
+    alert("데이터 저장 완료됐습니다.");
+  }, [uploadState])
 
   // drag
   const handleDrag = (e) => {
@@ -36,6 +41,7 @@ function UploadFile() {
   // file upload
   const fileUpload = (fileList) => {
     const fd = new FormData();
+    dispatch(updateRequestFileCount(fileList.length))
     // Save file data
     Object.values(fileList).forEach((file) => fd.append("file", file));
     (async () => {
