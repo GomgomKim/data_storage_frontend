@@ -1,14 +1,31 @@
 import axios from 'axios';
 import { serverInfo } from '../constants/serverInfo';
 import { apiKeys } from "../constants/apiKeys";
+import { serverActionKey } from "../constants/serverActionKey";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { updatePercent, updateRequestFileCount, updateSuccessFileCount } from "../actions/actionCreator";
+import { useEffect } from 'react';
 
 function HttpClient() {
   const dispatch = useDispatch();
   const uploadState = useSelector((state) => state.commonReducer.uploadState, shallowEqual);
   const serverUrl = serverInfo.PROTOCOL + "://" + serverInfo.IP + ":" + serverInfo.PORT;
-  
+  const patchToServer = useSelector((state) => state.commonReducer.patchToServer);
+
+
+  useEffect(() => {
+    console.log("gomgom patchToServer", patchToServer);
+    if(patchToServer){
+      switch (patchToServer.key) {
+        case serverActionKey.UPLOAD_FILE:
+          uploadFile(patchToServer.param);
+          break;
+        default:
+          break;
+      }
+    }
+  }, [patchToServer])
+
   const uploadFile = (file) => {
     axios.post(serverUrl + apiKeys.uploadCsv, file, {
       headers: {
