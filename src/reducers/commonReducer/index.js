@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 
-import udpateData from "./updateData";
+import uploadState from "./uploadState";
 
 export default combineReducers({
-  udpateData,
+  uploadState,
 });

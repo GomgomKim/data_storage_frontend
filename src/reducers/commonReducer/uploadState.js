@@ -1,17 +1,19 @@
-import { types } from "../../constants/actionsTypes";
+import { actionsTypes } from "../../constants/actionsTypes";
 
-const percent = 0;
-const requestFileCnt = 0;
-const successFileCnt = 0;
+const initState = {
+  percent: 0,
+  requestFileCnt: 0,
+  successFileCnt: 0,
+}
 
-export default function uploadState(state = percent, action) {
+export default function uploadState(state = initState, action) {
   switch (action.type) {
-    case types.UPLOAD_STATE:
-      return { percent: action.data };
-    case types.UPLOAD_STATE:
-      return { percent: action.data };
-    case types.UPLOAD_STATE:
-      return { percent: action.data };
+    case actionsTypes.UPDATE_PERCENT:
+      return { ...state, percent: action.percent };
+    case actionsTypes.UPDATE_REQUEST_FILE_COUNT:
+      return { ...state, percent: action.reqCnt };
+    case actionsTypes.UPDATE_SUCCESS_FILE_COUNT:
+      return { ...state, percent: action.successCnt };
     default:
       return state;
   }

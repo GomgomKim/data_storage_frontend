@@ -1,12 +1,16 @@
 import axios from 'axios';
-import serverInfo from '../constants/serverInfo';
+import { serverInfo } from '../constants/serverInfo';
 import { apiKeys } from "../constants/apiKeys";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { updatePercent, updateRequestFileCount, updateSuccessFileCount } from "../actions/actionCreator";
 
-const serverUrl = serverInfo.PROTOCOL + "://" + serverInfo.IP + ":" + serverInfo.PORT;
-
-const uploadFile = (file) => {
-  axios.post(serverUrl + apiKeys.uploadCsv, file, {
+function HttpClient() {
+  const dispatch = useDispatch();
+  const uploadState = useSelector((state) => state.commonReducer.uploadState, shallowEqual);
+  const serverUrl = serverInfo.PROTOCOL + "://" + serverInfo.IP + ":" + serverInfo.PORT;
+  
+  const uploadFile = (file) => {
+    axios.post(serverUrl + apiKeys.uploadCsv, file, {
       headers: {
         "Content-Type": `multipart/form-data;`,
       },
@@ -16,13 +20,14 @@ const uploadFile = (file) => {
       console.log("gomgom res", res);
       switch(res.data) {
         case "SUCCESS":
-          alert("데이터 저장 완료됐습니다.");
+          dispatch(updateSuccessFileCount(parseInt(uploadState.successFileCnt + 1)));
+          // alert("데이터 저장 완료됐습니다.");
           break;
         case "FAIL":
-          alert("데이터 저장에 실패했습니다.");
+          // alert("데이터 저장에 실패했습니다.");
           break;
         default:
-          alert("알 수 없는 오류입니다. 잠시 후 다시 시도해주세요.");
+          // alert("알 수 없는 오류입니다. 잠시 후 다시 시도해주세요.");
           break;
       }
     })
@@ -40,4 +45,6 @@ const uploadFile = (file) => {
           break;
       }
     });
+  }
 }
+export default HttpClient;

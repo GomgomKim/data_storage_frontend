@@ -1,19 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../css/uploadFile.css';
-import { httpClient } from '../api/httpClient';
+import HttpClient from '../api/HttpClient';
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 
 const UploadFile = () => {
   const [dragActive, setDragActive] = useState(false);
   const [fileName, setFileName] = useState("");
   const inputRef = useRef(null);
+  const uploadState = useSelector((state) => state.commonReducer.uploadState, shallowEqual);
+
 
   useEffect(() => {
-    const eventSource = new EventSource("http://localhost:8080/saveData/connect/id="+Math.random());
-    eventSource.addEventListener("sse", function (event) {
-      console.log("percent :",JSON.parse(event.data));
-
-      const data = JSON.parse(event.data);
-
+    console.log(uploadState);
       // (async () => {
       //   // 브라우저 알림
       //   const showNotification = () => {
@@ -45,7 +43,7 @@ const UploadFile = () => {
       //       showNotification();
       //   }
       // })();
-    })
+
   }, [])
 
   const handleChange = (e) => {
@@ -82,7 +80,7 @@ const UploadFile = () => {
     const fd = new FormData();
     // Save file data
     Object.values(fileList).forEach((file) => fd.append("file", file));
-    httpClient.UploadFile(fd);
+    HttpClient.UploadFile(fd);
   }
 
   const onButtonClick = () => {
