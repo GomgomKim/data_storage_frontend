@@ -10,7 +10,7 @@ function UploadFile() {
   const [fileName, setFileName] = useState("");
   const inputRef = useRef(null);
   const uploadState = useSelector((state) => state.commonReducer.uploadState, shallowEqual);
-
+  const dispatch = useDispatch();
 
   useEffect(() => {
     console.log(uploadState);
@@ -50,11 +50,11 @@ function UploadFile() {
     const fd = new FormData();
     // Save file data
     Object.values(fileList).forEach((file) => fd.append("file", file));
-    fetchToServer({
+    dispatch(fetchToServer({
       key: serverActionKey.UPLOAD_FILE,
       param: fd
-    });
-    console.log("gomgom upload");
+    }));
+    console.log("gomgom upload", fd);
   }
 
   const onButtonClick = () => {
