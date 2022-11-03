@@ -1,5 +1,5 @@
 import './App.css';
-import UploadFile from './components/UploadFile';
+import UploadFile from './components/upload/UploadFile';
 
 function App() {
   return (
