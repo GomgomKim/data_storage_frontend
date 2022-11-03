@@ -1,26 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import '../css/uploadFile.css';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { fetchToServer } from '../actions/actionCreator'
-import { serverActionKey } from '../constants/serverActionKey';
+import { updateSuccessFileCount } from "../actions/actionCreator";
+import requestUpload from '../api/requestUpload';
 
 function UploadFile() {
   const [dragActive, setDragActive] = useState(false);
   const [fileName, setFileName] = useState("");
   const inputRef = useRef(null);
-  const uploadState = useSelector((state) => state.commonReducer.uploadState, shallowEqual);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log(uploadState);
-  }, [])
-
-  const handleChange = (e) => {
-    e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
-      console.log("gomgom e.target.files", e.target.files);
-    }
-  };
+  const uploadState = useSelector((state) => state.commonReducer.uploadState, shallowEqual);
 
   // drag
   const handleDrag = (e) => {
@@ -40,7 +29,7 @@ function UploadFile() {
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setFileName(e.dataTransfer.files[0].name);
-      fileUpload(e.dataTransfer.files)
+      fileUpload(e.dataTransfer.files);
     }
   };
 
@@ -49,23 +38,45 @@ function UploadFile() {
     const fd = new FormData();
     // Save file data
     Object.values(fileList).forEach((file) => fd.append("file", file));
-
-    dispatch(fetchToServer({
-      key: serverActionKey.UPLOAD_FILE,
-      param: fd
-    }));
-    console.log("gomgom upload", fd);
+    (async () => {
+      try {
+        const res = requestUpload(fd);
+        switch(res.data) {
+          case "SUCCESS":
+            dispatch(updateSuccessFileCount(parseInt(uploadState.successFileCnt + 1)));
+            // alert("데이터 저장 완료됐습니다.");
+            break;
+          case "FAIL":
+            // alert("데이터 저장에 실패했습니다.");
+            break;
+          default:
+            // alert("알 수 없는 오류입니다. 잠시 후 다시 시도해주세요.");
+            break;
+        }
+      } catch (err) {
+        console.log("gomgom err", err);
+        switch(err.code) {
+          case "ERR_NETWORK":
+            alert("네트워크 오류입니다. 다시 시도해주세요.");
+            break;
+          case "ERR_BAD_RESPONSE":
+            alert("서버 오류입니다. 잠시 후 다시 시도해주세요.");
+            break;
+          default:
+            alert("알 수 없는 오류입니다. 잠시 후 다시 시도해주세요.");
+            break;
+        }
+      }
+    })();
   }
 
   const onButtonClick = () => {
     inputRef.current.click();
   };
 
-
   return (
-    <>
     <form id="form-file-upload" onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>
-      <input ref={inputRef} type="file" id="input-file-upload" multiple={true} onChange={handleChange} />
+      <input ref={inputRef} type="file" id="input-file-upload" multiple={true} />
       <label id="label-file-upload" htmlFor="input-file-upload" className={dragActive ? "drag-active" : "" }>
         <div>
           <p>Drag and drop your file here or</p>
@@ -81,7 +92,6 @@ function UploadFile() {
         </div> }
       <span>{fileName}</span>
     </form>
-    </>
   );
 };
 
