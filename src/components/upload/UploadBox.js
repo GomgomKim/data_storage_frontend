@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 
 function UploadBox(props) {
   const [dragActive, setDragActive] = useState(false);
-  const [fileName, setFileName] = useState("");
   const inputRef = useRef(null);
 
   const { onFileUpload } = props;
@@ -24,7 +23,6 @@ function UploadBox(props) {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFileName(e.dataTransfer.files[0].name);
       onFileUpload(e.dataTransfer.files);
     }
   };
@@ -49,7 +47,6 @@ function UploadBox(props) {
           onDragOver={handleDrag} 
           onDrop={handleDrop}>
         </div> }
-      <span>{fileName}</span>
     </form>
   );
 };
