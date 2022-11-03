@@ -3,6 +3,7 @@ import '../css/uploadFile.css';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { fetchToServer } from '../actions/actionCreator'
 import { serverActionKey } from '../constants/serverActionKey';
+import { updateRequestFileCount } from "../actions/actionCreator";
 
 function UploadFile() {
   const [dragActive, setDragActive] = useState(false);
@@ -12,8 +13,11 @@ function UploadFile() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(uploadState);
-  }, [])
+    console.log("gomgom uploadState", uploadState);
+    
+    alert("데이터 저장 완료됐습니다.");
+    
+  }, [uploadState])
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -49,7 +53,7 @@ function UploadFile() {
     const fd = new FormData();
     // Save file data
     Object.values(fileList).forEach((file) => fd.append("file", file));
-
+    dispatch(updateRequestFileCount(fileList.length))
     dispatch(fetchToServer({
       key: serverActionKey.UPLOAD_FILE,
       param: fd

@@ -11,9 +11,9 @@ export default function uploadState(state = initState, action) {
     case actionsTypes.UPDATE_PERCENT:
       return { ...state, percent: action.percent };
     case actionsTypes.UPDATE_REQUEST_FILE_COUNT:
-      return { ...state, percent: action.reqCnt };
+      return { ...state, requestFileCnt: action.reqCnt };
     case actionsTypes.UPDATE_SUCCESS_FILE_COUNT:
-      return { ...state, percent: action.successCnt };
+      return { ...state, successFileCnt: action.successCnt };
     default:
       return state;
   }

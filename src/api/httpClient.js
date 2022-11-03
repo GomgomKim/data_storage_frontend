@@ -14,6 +14,7 @@ function HttpClient() {
 
 
   useEffect(() => {
+    console.log("gomgom fetchToServer", fetchToServer);
     if(fetchToServer){
       switch (fetchToServer.key) {
         case serverActionKey.UPLOAD_FILE:
@@ -36,8 +37,8 @@ function HttpClient() {
       console.log("gomgom res", res);
       switch(res.data) {
         case "SUCCESS":
+          console.log("gomgom uploadState.successFileCnt", uploadState.successFileCnt);
           dispatch(updateSuccessFileCount(parseInt(uploadState.successFileCnt + 1)));
-          // alert("데이터 저장 완료됐습니다.");
           break;
         case "FAIL":
           // alert("데이터 저장에 실패했습니다.");
