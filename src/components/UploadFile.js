@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../css/uploadFile.css';
-import HttpClient from '../api/HttpClient';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { fetchToServer } from '../actions/actionCreator'
 import { serverActionKey } from '../constants/serverActionKey';
@@ -50,6 +49,7 @@ function UploadFile() {
     const fd = new FormData();
     // Save file data
     Object.values(fileList).forEach((file) => fd.append("file", file));
+
     dispatch(fetchToServer({
       key: serverActionKey.UPLOAD_FILE,
       param: fd

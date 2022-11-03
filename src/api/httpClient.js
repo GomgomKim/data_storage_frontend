@@ -10,21 +10,20 @@ function HttpClient() {
   const dispatch = useDispatch();
   const uploadState = useSelector((state) => state.commonReducer.uploadState, shallowEqual);
   const serverUrl = serverInfo.PROTOCOL + "://" + serverInfo.IP + ":" + serverInfo.PORT;
-  const patchToServer = useSelector((state) => state.commonReducer.patchToServer);
+  const fetchToServer = useSelector((state) => state.commonReducer.fetchToServer);
 
 
   useEffect(() => {
-    console.log("gomgom patchToServer", patchToServer);
-    if(patchToServer){
-      switch (patchToServer.key) {
+    if(fetchToServer){
+      switch (fetchToServer.key) {
         case serverActionKey.UPLOAD_FILE:
-          uploadFile(patchToServer.param);
+          uploadFile(fetchToServer.param);
           break;
         default:
           break;
       }
     }
-  }, [patchToServer])
+  }, [fetchToServer])
 
   const uploadFile = (file) => {
     axios.post(serverUrl + apiKeys.uploadCsv, file, {
