@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../css/uploadFile.css';
-import axios from 'axios'; 
+import { httpClient } from '../api/httpClient';
 
 const UploadFile = () => {
   const [dragActive, setDragActive] = useState(false);
@@ -10,7 +10,7 @@ const UploadFile = () => {
   useEffect(() => {
     const eventSource = new EventSource("http://localhost:8080/saveData/connect/id="+Math.random());
     eventSource.addEventListener("sse", function (event) {
-      console.log("percent :",event.data);
+      console.log("percent :",JSON.parse(event.data));
 
       const data = JSON.parse(event.data);
 
@@ -73,53 +73,16 @@ const UploadFile = () => {
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setFileName(e.dataTransfer.files[0].name);
-      console.log(e.dataTransfer.files[0]);
       fileUpload(e.dataTransfer.files)
     }
   };
 
   // file upload
   const fileUpload = (fileList) => {
-    // console.log("gomgom fileList", fileList);
     const fd = new FormData();
-    // 파일 데이터 저장
+    // Save file data
     Object.values(fileList).forEach((file) => fd.append("file", file));
-    console.log("gomgom fd", fd);
-
-    axios.post('http://localhost:8080/saveData/create-csv', fd, {
-      headers: {
-        "Content-Type": `multipart/form-data;`,
-      },
-      baseURL: 'http://localhost:8080'
-    })
-    .then((res) => {
-      console.log("gomgom res", res);
-      switch(res.data) {
-        case "SUCCESS":
-          alert("데이터 저장 완료됐습니다.");
-          break;
-        case "FAIL":
-          alert("데이터 저장에 실패했습니다.");
-          break;
-        default:
-          alert("알 수 없는 오류입니다. 잠시 후 다시 시도해주세요.");
-          break;
-      }
-    })
-    .catch((err) => {
-      console.log("gomgom err", err);
-      switch(err.code) {
-        case "ERR_NETWORK":
-          alert("네트워크 오류입니다. 다시 시도해주세요.");
-          break;
-        case "ERR_BAD_RESPONSE":
-          alert("서버 오류입니다. 잠시 후 다시 시도해주세요.");
-          break;
-        default:
-          alert("알 수 없는 오류입니다. 잠시 후 다시 시도해주세요.");
-          break;
-      }
-    });
+    httpClient.UploadFile(fd);
   }
 
   const onButtonClick = () => {
